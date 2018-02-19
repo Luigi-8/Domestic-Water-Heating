@@ -4,16 +4,16 @@ Created on Sun Feb 18 15:35:06 2018
 
 @author: User
 """
+
 import math
 import random
 import pandas as pd
 import datetime as dt
 import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import style
 
-# Liter per day per person for showers
-lts_shower = 47.74
+# Liters per day per person for showers: 47.74
+# Liters per day per person for sinks: 28% x 47.74
+# Liters per day per person for DW: 18% x 47.74
 
 def perfil_anual(personas):
 
@@ -155,32 +155,23 @@ def sink(personas):
     avg_flow = 4.32
     stdev_flow = 2.31
 
-    # Generador da consumo de 90% de lo que se consume en ducha
-    ltsdia = lts_shower * personas * 0.28    # NREL (12.5 + 4.16 * personas) * 3.79
-    maxcons = (lts_shower + 22.64) * personas * 0.28    # 22.64 (stdev) 
-    maximo = ltsdia - maxcons
-
     d = []
-    while ltsdia > 0:
+    # 0.28 * 47.74 / (0.62 * 4.32) = 4.99 = 5
+    while len(d) < 5 * personas:
 
         # Duracion
-        dur = - avg_dur * math.log(random.random())
-        if dur < 0:
-            continue
+        dur = 0
+        while dur < 0.1:
+            dur = - avg_dur * math.log(random.random())
 
         # Flujo
-        flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
-               math.sqrt(-2 * math.log(random.random())))
-        if flu < 1 or flu > 11:
-            continue
+        flu = 0
+        while (flu < 1) | (flu > 11):
+            flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
+                   math.sqrt(-2 * math.log(random.random())))
 
-        vol = dur * flu
         d.append({'Hora': sink_time(), 'Duracion [min]': dur,
-                  'Flujo [lts/min]': flu, 'Volumen [lts] tibia': vol})
-        ltsdia -= vol
-        if ltsdia < maximo:
-            d = []
-            ltsdia = lts_shower * personas * 0.28
+                  'Flujo [lts/min]': flu, 'Volumen [lts] tibia': dur * flu})
 
     df = pd.DataFrame(d)
     df['Uso'] = 'Pileta'
@@ -196,34 +187,22 @@ def shower(personas):
     avg_flow = 8.14   # 8.52 en Generator
     stdev_flow = 1.76  # 2.57 en Generator
 
-    ltsdia = lts_shower * personas      # NREL (14 + 4.67 * personas) * 3.79
-    maxcons = (lts_shower + 22.64) * personas      # 22.64(stdev)
-    maximo = ltsdia - maxcons
-
     d = []
-    while ltsdia > 0:
+    while len(d) < personas:
 
         # Duracion
-        dur = - avg_dur * math.log(random.random())
-        if dur < 2 or dur > 15:
-            continue
+        dur = 0
+        while (dur < 2) | (dur > 15):
+            dur = - avg_dur * math.log(random.random())
 
         # Flujo
-        flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
-               math.sqrt(-2 * math.log(random.random())))
-        if flu < 2.75 or flu > 11:
-            continue
-
-        vol = dur * flu
-        if vol > 70:
-            continue
+        flu = 0
+        while (flu < 2.75) | (flu > 11):
+            flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
+                   math.sqrt(-2 * math.log(random.random())))
 
         d.append({'Hora': shower_time(), 'Duracion [min]': dur,
-                  'Flujo [lts/min]': flu, 'Volumen [lts] tibia': vol})
-        ltsdia -= vol
-        if ltsdia < maximo:
-            d = []
-            ltsdia = lts_shower * personas
+                  'Flujo [lts/min]': flu, 'Volumen [lts] tibia': flu * dur})
 
     df = pd.DataFrame(d)
     df['Uso'] = 'Ducha'
@@ -239,34 +218,23 @@ def DW(personas):
     avg_flow = 5.26   # 5.26 en Generator
     stdev_flow = 0.76  # 0.76 en Generator
 
-    # Generador da 18% de consumo de ducha
-    ltsdia = lts_shower * personas * 0.18     # NREL (2.5 + 0.833*personas)*3.79
-    maxcons = (lts_shower + 22.64) * personas * 0.18     # 22.64(stdev)
-    maximo = ltsdia - maxcons
-
     d = []
-    while ltsdia > 0:
+    # 0.18 * 47.74 / (1.38 * 5.26) = 1.18 = 2
+    while len(d) < 2 * personas:
+
         # Duracion
-        dur = - avg_dur * math.log(random.random())
-        if dur < 0:
-            continue
+        dur = 0
+        while dur < 0.1:
+            dur = - avg_dur * math.log(random.random())
 
         # Flujo
-        flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
-               math.sqrt(-2 * math.log(random.random())))
-        if flu < 1 or flu > 11:
-            continue
-
-        vol = dur * flu
-        if vol > 10:
-            continue
+        flu = 0
+        while (flu < 1) | (flu > 11):
+            flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
+                   math.sqrt(-2 * math.log(random.random())))
 
         d.append({'Hora': shower_time(), 'Duracion [min]': dur,
-                  'Flujo [lts/min]': flu, 'Volumen [lts] caliente': vol})
-        ltsdia -= vol
-        if ltsdia < maximo:
-            d = []
-            ltsdia = lts_shower * personas * 0.18
+                  'Flujo [lts/min]': flu, 'Volumen [lts] caliente': dur * flu})
 
     df = pd.DataFrame(d)
     df['Uso'] = 'Platos'
