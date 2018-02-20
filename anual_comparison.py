@@ -14,8 +14,8 @@ import matplotlib.ticker as ticker
 import datetime as dt
 
 
-def anual_comparison(personas=0):
-    yeardata = gen_yeardata(personas)
+def anual_comparison(personas=0, graphs=True):
+    yeardata = gen_yeardata(personas, graphs)
     for b in range(1, 3):
         for a in range(1, 3):
             if b == 2 and a == 1:
@@ -94,102 +94,102 @@ def anual_comparison(personas=0):
                           tit[3] + 'con colect ' + labels2[3]: esc4[3][key2[b]].sum(),
                           tit[4] + 'con colect ' + labels2[4]: esc4[4][key2[b]].sum()}
 
-            plt.figure()
-            style.use('fivethirtyeight')
+            if graphs:
+                plt.figure()
+                style.use('fivethirtyeight')
 
-            maxy = int(round(es_base[key2[b]].max() * 1.3))
-            y = [i for i in range(0, maxy, round(maxy/5))]
-                               
-            ax1 = plt.subplot(4, 1, 1)
-            ax2 = plt.subplot(4, 1, 2)
-            ax3 = plt.subplot(4, 1, 3)
-            ax4 = plt.subplot(4, 1, 4)
-                        
-            ax = {1: ax1, 2: ax2, 3: ax3, 4: ax4}
-            for i in range(1, 5):
-                if i == 1:
-                    ax[i] = plt.subplot(4, 1, 1)
-                else:
-                    ax[i] = plt.subplot(4, 1, i, sharex=ax1)
-                plt.plot(es_base[key[a]], es_base[key2[b]], label='Esc. Base', color='r', linewidth=1.5)
-                plt.plot(esc[i][key[a]], esc[i][key2[b]], label=labels[i] + ' sin colector', color='b', linewidth=1.5)
-                plt.plot(esc3[i][key[a]], esc3[i][key2[b]], label=labels[i] + ' con colector', color='tab:orange', linewidth=1.5)
+                maxy = int(round(es_base[key2[b]].max() * 1.3))
+                y = [i for i in range(0, maxy, round(maxy/5))]
 
-                if b == 2:
-                    plt.plot(esc2[i][key[a]], esc2[i][key2[b]], label=labels2[i] + ' sin colector', color='m', linewidth=1.5)
-                    plt.plot(esc4[i][key[a]], esc4[i][key2[b]], label=labels2[i] + ' con colector', color='tab:gray', linewidth=1.5)
-                    plt.fill_between(es_base[key[a]], es_base[key2[b]], esc2[i][key2[b]], where=(es_base[key2[b]] > esc2[i][key2[b]]), color='g', alpha=0.2)
-                    plt.fill_between(es_base[key[a]], esc2[i][key2[b]], es_base[key2[b]], where=(es_base[key2[b]] < esc2[i][key2[b]]), color='y', alpha=0.2)
+                ax1 = plt.subplot(4, 1, 1)
+                ax2 = plt.subplot(4, 1, 2)
+                ax3 = plt.subplot(4, 1, 3)
+                ax4 = plt.subplot(4, 1, 4)
 
-                plt.fill_between(es_base[key[a]], es_base[key2[b]], esc[i][key2[b]], where=(es_base[key2[b]] > esc[i][key2[b]]), color='g', alpha=0.2)
-                plt.fill_between(es_base[key[a]], esc[i][key2[b]], es_base[key2[b]], where=(es_base[key2[b]] < esc[i][key2[b]]), color='y', alpha=0.2)
-                if i == 3:
-                    plt.ylabel(ylab, fontsize=24)
-                plt.yticks(y, fontsize=20)
-                plt.ylim(-maxy*0.03, maxy)
-                plt.legend(fontsize=10, loc=2)
-                plt.setp(ax[i].get_xticklabels(), visible=False)
-                plt.grid(True)
-                plt.title('Esc. ' + tit[i], fontsize=28, color='c')
-                if i == 4:
-                    plt.setp(ax[i].get_xticklabels(), visible=True)
-                    x = [i for i in range(1, 13)]
-                    plt.xlabel("Mes del año", fontsize=24)
-                    if a == 1:
-                        x = [i for i in range(15, 366, 15)]
-                        x.insert(0, 1)
-                        plt.xlabel("día del año", fontsize=24)
-                    plt.xticks(x, fontsize=20)
+                ax = {1: ax1, 2: ax2, 3: ax3, 4: ax4}
+                for i in range(1, 5):
+                    if i == 1:
+                        ax[i] = plt.subplot(4, 1, 1)
+                    else:
+                        ax[i] = plt.subplot(4, 1, i, sharex=ax1)
+                    plt.plot(es_base[key[a]], es_base[key2[b]], label='Esc. Base', color='r', linewidth=1.5)
+                    plt.plot(esc[i][key[a]], esc[i][key2[b]], label=labels[i] + ' sin colector', color='b', linewidth=1.5)
+                    plt.plot(esc3[i][key[a]], esc3[i][key2[b]], label=labels[i] + ' con colector', color='tab:orange', linewidth=1.5)
 
-            plt.subplots_adjust(hspace=0.15)
+                    if b == 2:
+                        plt.plot(esc2[i][key[a]], esc2[i][key2[b]], label=labels2[i] + ' sin colector', color='m', linewidth=1.5)
+                        plt.plot(esc4[i][key[a]], esc4[i][key2[b]], label=labels2[i] + ' con colector', color='tab:gray', linewidth=1.5)
+                        plt.fill_between(es_base[key[a]], es_base[key2[b]], esc2[i][key2[b]], where=(es_base[key2[b]] > esc2[i][key2[b]]), color='g', alpha=0.2)
+                        plt.fill_between(es_base[key[a]], esc2[i][key2[b]], es_base[key2[b]], where=(es_base[key2[b]] < esc2[i][key2[b]]), color='y', alpha=0.2)
 
-    plt.figure()
-    ax = plt.subplot(1, 1, 1)
-    plt.title('Consumo calentamiento de agua caliente anual', fontsize=28, color='c')
+                    plt.fill_between(es_base[key[a]], es_base[key2[b]], esc[i][key2[b]], where=(es_base[key2[b]] > esc[i][key2[b]]), color='g', alpha=0.2)
+                    plt.fill_between(es_base[key[a]], esc[i][key2[b]], es_base[key2[b]], where=(es_base[key2[b]] < esc[i][key2[b]]), color='y', alpha=0.2)
+                    if i == 3:
+                        plt.ylabel(ylab, fontsize=24)
+                    plt.yticks(y, fontsize=20)
+                    plt.ylim(-maxy*0.03, maxy)
+                    plt.legend(fontsize=10, loc=2)
+                    plt.setp(ax[i].get_xticklabels(), visible=False)
+                    plt.grid(True)
+                    plt.title('Esc. ' + tit[i], fontsize=28, color='c')
+                    if i == 4:
+                        plt.setp(ax[i].get_xticklabels(), visible=True)
+                        x = [i for i in range(1, 13)]
+                        plt.xlabel("Mes del año", fontsize=24)
+                        if a == 1:
+                            x = [i for i in range(15, 366, 15)]
+                            x.insert(0, 1)
+                            plt.xlabel("día del año", fontsize=24)
+                        plt.xticks(x, fontsize=20)
+
+                plt.subplots_adjust(hspace=0.15)
+
     ordenadaE = pd.DataFrame(totalE, index=['kWh/año']).transpose().sort_values(by='kWh/año', ascending=False)
-    plt.barh(range(len(ordenadaE)), ordenadaE.iloc[:, 0], align='center')
-    plt.yticks(range(len(ordenadaE)), ordenadaE.index, fontsize=20)
-    plt.xlabel('kWh / año', fontsize=24)
-    plt.xticks(fontsize=20)
-    ax.set_axisbelow(True)
-    plt.grid(False, axis='y')
-    porc = [int((i / ordenadaE.at['Esc. Base', 'kWh/año'])* 100) for i in ordenadaE.values]
-    labels = [str(i) + '% del Esc. Base' for i in porc ]
-    rects = ax.patches
-    # esp = 0.3 *rects[-1].get_width()
-    for rect, label in zip(rects, labels):
-        width = rect.get_width()
-        ax.text(width * 0.8, rect.get_y(), label, ha='center', va='bottom', fontsize=20, color='r', weight='bold')
-    # rect.get_y() + rect.get_height()/2
-    
-    plt.figure()
-    ax = plt.subplot(1, 1, 1)
-    plt.title('Costo calentamiento de agua caliente anual', fontsize=28, color='c')
     ordenadaP = pd.DataFrame(totalP, index=['$/año']).transpose().sort_values(by='$/año', ascending=False)
-    plt.barh(range(len(ordenadaP)), ordenadaP.iloc[:, 0], align='center')
-    plt.yticks(range(len(ordenadaP)), ordenadaP.index, fontsize=20)
-    plt.xlabel('miles de $ / año', fontsize=24)
-    plt.xticks(fontsize=20)
-    ax.set_axisbelow(True)
-    plt.grid(False, axis='y')
-    porc = [int((i / ordenadaP.at['Esc. Base', '$/año'])* 100) for i in ordenadaP.values]
-    labels = [str(i) + '% del Esc. Base' for i in porc ]
-    rects = ax.patches
-    # esp = 0.35 * rects[-1].get_width()
-    for rect, label in zip(rects, labels):
-        width = rect.get_width()
-        ax.text(width * 0.9, rect.get_y(), label, ha='center', va='bottom', fontsize=18, color='r', weight='bold')
     
-    scale_x = 1000
-    ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x/scale_x))
-    ax.xaxis.set_major_formatter(ticks_x)
-    plt.subplots_adjust(left=0.18)
+    if graphs:
+        plt.figure()
+        ax = plt.subplot(1, 1, 1)
+        plt.title('Consumo calentamiento de agua caliente anual', fontsize=28, color='c')
+        plt.barh(range(len(ordenadaE)), ordenadaE.iloc[:, 0], align='center')
+        plt.yticks(range(len(ordenadaE)), ordenadaE.index, fontsize=20)
+        plt.xlabel('kWh / año', fontsize=24)
+        plt.xticks(fontsize=20)
+        ax.set_axisbelow(True)
+        plt.grid(False, axis='y')
+        porc = [int((i / ordenadaE.at['Esc. Base', 'kWh/año'])* 100) for i in ordenadaE.values]
+        labels = [str(i) + '% del Esc. Base' for i in porc ]
+        rects = ax.patches
+        # esp = 0.3 *rects[-1].get_width()
+        for rect, label in zip(rects, labels):
+            width = rect.get_width()
+            ax.text(width * 0.8, rect.get_y(), label, ha='center', va='bottom', fontsize=20, color='r', weight='bold')
+        # rect.get_y() + rect.get_height()/2
+        
+        plt.figure()
+        ax = plt.subplot(1, 1, 1)
+        plt.title('Costo calentamiento de agua caliente anual', fontsize=28, color='c')
+        plt.barh(range(len(ordenadaP)), ordenadaP.iloc[:, 0], align='center')
+        plt.yticks(range(len(ordenadaP)), ordenadaP.index, fontsize=20)
+        plt.xlabel('miles de $ / año', fontsize=24)
+        plt.xticks(fontsize=20)
+        ax.set_axisbelow(True)
+        plt.grid(False, axis='y')
+        porc = [int((i / ordenadaP.at['Esc. Base', '$/año'])* 100) for i in ordenadaP.values]
+        labels = [str(i) + '% del Esc. Base' for i in porc ]
+        rects = ax.patches
+        # esp = 0.35 * rects[-1].get_width()
+        for rect, label in zip(rects, labels):
+            width = rect.get_width()
+            ax.text(width * 0.9, rect.get_y(), label, ha='center', va='bottom', fontsize=18, color='r', weight='bold')
+        
+        scale_x = 1000
+        ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x/scale_x))
+        ax.xaxis.set_major_formatter(ticks_x)
+        plt.subplots_adjust(left=0.18)
 
-    # ordenadaP['Sistema'] = ordenadaP.index
     ordenadaP.index.name = 'Sistema'
     ordenadaE.index.name = 'Sistema'
-    # ordenadaP = ordenadaP.reset_index()
-    # ordenadaP = ordenadaP[['Sistema', '$/año']]
     ordenadaP = ordenadaP.round(0)
     ordenadaE = ordenadaE.round(0)
 

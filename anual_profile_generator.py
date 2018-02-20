@@ -221,7 +221,7 @@ def DW(personas):
 
     d = []
     # 0.18 * 47.74 / (1.38 * 5.26) = 1.18 = 2
-    while len(d) < 2 * personas:
+    while len(d) <  personas:
 
         # Duracion
         dur = 0

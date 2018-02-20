@@ -15,7 +15,7 @@ from matplotlib import style
 # from datetime import date
 
 
-def gen_yeardata(personas=0):
+def gen_yeardata(personas=0, graphs=True):
     if personas == 0:
         personas = int(input('Ingrese el numero de personas en el hogar:  '))
 
@@ -64,57 +64,58 @@ def gen_yeardata(personas=0):
 
     anual = yeardata.groupby(['DOY'])['Total lts caliente'].sum().reset_index()
 
-    style.use('fivethirtyeight')
+    if graphs:
+        style.use('fivethirtyeight')
 
-    plt.figure()
-    ax = plt.subplot(1, 1, 1)
-    plt.bar(anual['DOY'], anual['Total lts caliente'], linewidth=10)
-    plt.xlabel('día del año', fontsize=24)
-    plt.yticks(fontsize=20)
-    x = [i for i in range(15, 366, 15)]
-    x.insert(0, 1)
-    plt.xticks(x, fontsize=20)
-    plt.ylabel('Consumo de agua caliente lts/día', fontsize=24)
-    plt.grid(False, axis='x')
-    ax.set_xlim(xmin=0)
+        plt.figure()
+        ax = plt.subplot(1, 1, 1)
+        plt.bar(anual['DOY'], anual['Total lts caliente'], linewidth=10)
+        plt.xlabel('día del año', fontsize=24)
+        plt.yticks(fontsize=20)
+        x = [i for i in range(15, 366, 15)]
+        x.insert(0, 1)
+        plt.xticks(x, fontsize=20)
+        plt.ylabel('Consumo de agua caliente lts/día', fontsize=24)
+        plt.grid(False, axis='x')
+        ax.set_xlim(xmin=0)
 
-    plt.figure()
-    ax = plt.subplot(1, 1, 1)
-    d = random.randint(1, 365)
-    day = yeardata[yeardata['DOY'] == d]
-    x2 = day['Hora'].values.tolist()
-    plt.bar(day['Hora'].values.tolist(), day['Total lts caliente'].values.tolist())
-    fec = dt.date(2018, 1, 1) + dt.timedelta(d - 1)
-    tit = 'Perfil del día N ' + str(d) + ' (' + fec.strftime("%d-%b") + ')'
-    plt.title(tit, fontsize=28)
-    plt.yticks(fontsize=20)
-    plt.xticks(x2, fontsize=20)
-    plt.xlabel('Hora', fontsize=24)
-    plt.ylabel('Consumo de agua caliente lts/hora', fontsize=24)
-    plt.grid(False, axis='x')
-    label = "Total de litros\nconsumidos en el día:\n" + str(round(day['Total lts caliente'].sum(), 0))
-    ax.text(2, day['Total lts caliente'].max() * 0.9, label, ha='center', va='bottom', fontsize=18, weight='bold')
-    ax.set_xlim(xmin=0)
+        plt.figure()
+        ax = plt.subplot(1, 1, 1)
+        d = random.randint(1, 365)
+        day = yeardata[yeardata['DOY'] == d]
+        x2 = day['Hora'].values.tolist()
+        plt.bar(day['Hora'].values.tolist(), day['Total lts caliente'].values.tolist())
+        fec = dt.date(2018, 1, 1) + dt.timedelta(d - 1)
+        tit = 'Perfil del día N ' + str(d) + ' (' + fec.strftime("%d-%b") + ')'
+        plt.title(tit, fontsize=28)
+        plt.yticks(fontsize=20)
+        plt.xticks(x2, fontsize=20)
+        plt.xlabel('Hora', fontsize=24)
+        plt.ylabel('Consumo de agua caliente lts/hora', fontsize=24)
+        plt.grid(False, axis='x')
+        label = "Total de litros\nconsumidos en el día:\n" + str(round(day['Total lts caliente'].sum(), 0))
+        ax.text(2, day['Total lts caliente'].max() * 0.9, label, ha='center', va='bottom', fontsize=18, weight='bold')
+        ax.set_xlim(xmin=0)
 
-    plt.figure()
-    yeardata['COP'] = 6.81 - 0.121 * (60 - yeardata['TAM']) + 0.00063 * (60 - yeardata['TAM']) * (60 - yeardata['TAM'])
-    yeardata['COP'].plot()
-    plt.ylabel('COP', fontsize=24)
-    plt.xlabel('Hora del año', fontsize=24)
-    plt.xticks(fontsize=20)
-    plt.yticks(fontsize=20)
-    plt.ylim(0, 4.5)
-
-    plt.figure()
-    ef_col = yeardata.groupby('DOY')['Qu','GTI45'].sum()
-    # Apeture area del colector 2.33 m2
-    ef_col['Ef'] = round(ef_col['Qu'] / (ef_col['GTI45'] * 2.33) * 100)
-    ef_col['Ef'].plot()
-    plt.ylabel('Eficiencia diaria (%)', fontsize=24)
-    plt.xlabel('DOY', fontsize=24)
-    plt.xticks(fontsize=20)
-    plt.yticks(fontsize=20)
-    plt.ylim(0, 70)
+        plt.figure()
+        yeardata['COP'] = 6.81 - 0.121 * (60 - yeardata['TAM']) + 0.00063 * (60 - yeardata['TAM']) * (60 - yeardata['TAM'])
+        yeardata['COP'].plot()
+        plt.ylabel('COP', fontsize=24)
+        plt.xlabel('Hora del año', fontsize=24)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        plt.ylim(0, 4.5)
+    
+        plt.figure()
+        ef_col = yeardata.groupby('DOY')['Qu','GTI45'].sum()
+        # Apeture area del colector 2.33 m2
+        ef_col['Ef'] = round(ef_col['Qu'] / (ef_col['GTI45'] * 2.33) * 100)
+        ef_col['Ef'].plot()
+        plt.ylabel('Eficiencia diaria (%)', fontsize=24)
+        plt.xlabel('DOY', fontsize=24)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        plt.ylim(0, 70)
     
 
     return yeardata

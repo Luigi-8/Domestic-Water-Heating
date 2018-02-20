@@ -16,17 +16,17 @@ def variabilidad(runs):
 
     for i in range(len(it)):
         if i == 0:
-            corr = anual_comparison(it[i])
+            corr = anual_comparison(it[i], False)
             resE = corr[0]
             resE.rename(columns={'kWh/año': 'kWh/año ' + str(it[i]) + ' pers'}, inplace=True)
             resP = corr[1]
             resP.rename(columns={'$/año': '$/año ' + str(it[i]) + ' pers'}, inplace=True)
         else:
-            corr = anual_comparison(it[i])
+            corr = anual_comparison(it[i], False)
             dfE = corr[0]
             dfE.rename(columns={'kWh/año': 'kWh/año ' + str(it[i]) + ' pers'}, inplace=True)
             resE = pd.concat([resE, dfE], axis=1)
-            dfP = anual_comparison(it[i])[1]
+            dfP = corr[1]
             dfP.rename(columns={'$/año': '$/año ' + str(it[i]) + ' pers'}, inplace=True)
             resP = pd.concat([resP, dfP], axis=1)
 
@@ -52,17 +52,17 @@ def var_integrantes():
 
     for i in range(len(it)):
         if i == 0:
-            corr = anual_comparison(it[i])
+            corr = anual_comparison(it[i], False)
             resE = corr[0]
             resE.rename(columns={'kWh/año': 'kWh/año ' + str(it[i]) + ' pers'}, inplace=True)
             resP = corr[1]
             resP.rename(columns={'$/año': '$/año ' + str(it[i]) + ' pers'}, inplace=True)
         else:
-            corr = anual_comparison(it[i])
+            corr = anual_comparison(it[i], False)
             dfE = corr[0]
             dfE.rename(columns={'kWh/año': 'kWh/año ' + str(it[i]) + ' pers'}, inplace=True)
             resE = pd.concat([resE, dfE], axis=1)
-            dfP = anual_comparison(it[i])[1]
+            dfP = corr[1]
             dfP.rename(columns={'$/año': '$/año ' + str(it[i]) + ' pers'}, inplace=True)
             resP = pd.concat([resP, dfP], axis=1)
 
@@ -89,17 +89,17 @@ def var_consumo():
     labels = {it[0]: '-50 %', it[1]: '-25 %', it[2]: 'promedio', it[3]: '+25 %', it[4]: '+50 %'}
     for i in range(len(it)):
         if i == 0:
-            corr = anual_comparison(it[i])
+            corr = anual_comparison(it[i], False)
             resE = corr[0]
             resE.rename(columns={'kWh/año': 'kWh/año ' + str(labels[it[i]])}, inplace=True)
             resP = corr[1]
             resP.rename(columns={'$/año': '$/año ' + str(labels[it[i]])}, inplace=True)
         else:
-            corr = anual_comparison(it[i])
+            corr = anual_comparison(it[i], False)
             dfE = corr[0]
             dfE.rename(columns={'kWh/año': 'kWh/año ' + str(labels[it[i]])}, inplace=True)
             resE = pd.concat([resE, dfE], axis=1)
-            dfP = anual_comparison(it[i])[1]
+            dfP = corr[1]
             dfP.rename(columns={'$/año': '$/año ' + str(labels[it[i]])}, inplace=True)
             resP = pd.concat([resP, dfP], axis=1)
 
