@@ -161,7 +161,7 @@ def sink(personas):
 
         # Duracion
         dur = 0
-        while dur < 0.1:
+        while dur < 0.01:
             dur = - avg_dur * math.log(random.random())
 
         # Flujo
@@ -201,8 +201,9 @@ def shower(personas):
             flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
                    math.sqrt(-2 * math.log(random.random())))
 
-        d.append({'Hora': shower_time(), 'Duracion [min]': dur,
-                  'Flujo [lts/min]': flu, 'Volumen [lts] tibia': flu * dur})
+        if (flu * dur) < 120:
+            d.append({'Hora': shower_time(), 'Duracion [min]': dur,
+                      'Flujo [lts/min]': flu, 'Volumen [lts] tibia': flu * dur})
 
     df = pd.DataFrame(d)
     df['Uso'] = 'Ducha'
@@ -224,7 +225,7 @@ def DW(personas):
 
         # Duracion
         dur = 0
-        while dur < 0.1:
+        while dur < 0.01:
             dur = - avg_dur * math.log(random.random())
 
         # Flujo
