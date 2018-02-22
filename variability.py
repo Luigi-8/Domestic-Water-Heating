@@ -86,7 +86,8 @@ def var_integrantes():
 def var_consumo():
     # 3 integrantes pero con consumos de -50% a +50%
     it = [3 * i / 100 for i in range(50, 160, 25)]
-    labels = {it[0]: '-50 %', it[1]: '-25 %', it[2]: 'promedio', it[3]: '+25 %', it[4]: '+50 %'}
+    labels = {it[0]: '-50 %', it[1]: '-25 %', it[2]: 'promedio',
+              it[3]: '+25 %', it[4]: '+50 %'}
     for i in range(len(it)):
         if i == 0:
             corr = anual_comparison(it[i], False)
@@ -116,5 +117,5 @@ def var_consumo():
     resE.plot.barh(stacked=True)
     plt.grid(False, axis='y')
     plt.xlabel('kWh/año')
-    
+
     return res

@@ -8,8 +8,8 @@ import pandas as pd
 import numpy as np
 
 # SYSTEMS
-
 Tsal = 60   # Temp salida
+
 
 def calefon(base, Efi, colector=False):
     if Efi == 'A':
@@ -27,8 +27,8 @@ def calefon(base, Efi, colector=False):
     if colector:
         key = 'Temp salida a respaldo'
 
-    base['Econs [kWh]'] = Qpr / 24 + base['Total lts caliente'] * 4.184 * (Tsal - base[key]) / 3600
-
+    base['Econs [kWh]'] = Qpr / 24 + (base['Total lts caliente'] * 4.184 *
+                                      (Tsal - base[key]) / 3600)
     return base.loc[:, ['DOY', 'MES', 'Hora', 'Econs [kWh]']]
 
 
@@ -37,40 +37,47 @@ def bbacalor(base, colector=False):
     # COP de paper con DT entre Tamb y adentro del calentador
     # 0.74 kWh/día para el de argas de 20 a 45 grados
     Qpr = 0.74 / 25 * (60 - 18)
-    base['COP'] = 6.81 - 0.121 * (Tsal - base['TAM']) + 0.00063 * (Tsal - base['TAM']) * (Tsal - base['TAM'])
+    base['COP'] = (6.81 - 0.121 * (Tsal - base['TAM']) + 0.00063 *
+                   (Tsal - base['TAM']) * (Tsal - base['TAM']))
 
     key = 'Tmains'
     if colector:
         key = 'Temp salida a respaldo'
 
-    base['Econs [kWh]'] = Qpr / 24 + base['Total lts caliente'] * 4.184 * (Tsal - base[key]) / (base['COP'] * 3600)
+    base['Econs [kWh]'] = (Qpr / 24 + base['Total lts caliente'] * 4.184 *
+                           (Tsal - base[key]) / (base['COP'] * 3600))
 
     return base.loc[:, ['DOY', 'MES', 'Hora', 'Econs [kWh]']]
 
 
 def gas_almacen(base, colector=False,  EF=0.67):
-    # EF tiene en cuenta perdidas ya que es energia util que sale / total de energia entregada al calentador
-    # EF minimo para que cumpla con certificacion Energy Star 0.67 para menores de 208 lts
+    # EF tiene en cuenta perdidas ya que es energia util que sale
+    # divido el total de energia entregada al calentador
+    # EF minimo para que cumpla con certificacion Energy Star 0.67
+    # para menores de 208 lts
 
     key = 'Tmains'
     if colector:
         key = 'Temp salida a respaldo'
 
-    base['Econs [kWh]'] = base['Total lts caliente'] * 4.184 * (Tsal - base[key]) / (EF * 3600)
+    base['Econs [kWh]'] = (base['Total lts caliente'] * 4.184 *
+                           (Tsal - base[key]) / (EF * 3600))
 
     return base.loc[:, ['DOY', 'MES', 'Hora', 'Econs [kWh]']]
 
 
 def gas_inst(base, colector=False, EF=0.9):
-    # EF tiene en cuenta perdidas ya que es energia util que sale / total de energia entregada al calentador
+    # EF tiene en cuenta perdidas ya que es energia util que sale
+    # divido el total de energia entregada al calentador
     # EF minimo para que cumpla con certificacion Energy Star 0.9
 
     key = 'Tmains'
     if colector:
         key = 'Temp salida a respaldo'
 
-    base['Econs [kWh]'] = base['Total lts caliente'] * 4.184 * (Tsal - base[key]) / (EF * 3600)
-
+    base['Econs [kWh]'] = (base['Total lts caliente'] * 4.184 *
+                           (Tsal - base[key]) / (EF * 3600))
+    
     return base.loc[:, ['DOY', 'MES', 'Hora', 'Econs [kWh]']]
 
 # TARIFFS
@@ -93,7 +100,8 @@ def ressimple(df):
     pivot = df.groupby(by=['MES'])['Econs [kWh]'].agg(np.sum).reset_index()
     # Segun UTE 37% de la energia consumida es para calentamient de agua
     for i in range(len(pivot)):
-        pivot.loc[i, '$'] = (p_ressim(pivot.loc[i, 'Econs [kWh]'] / 0.37) - p_ressim(pivot.loc[i, 'Econs [kWh]'] / 0.37 * 0.63))
+        pivot.loc[i, '$'] = ((p_ressim(pivot.loc[i, 'Econs [kWh]'] / 0.37) -
+                              p_ressim(pivot.loc[i, 'Econs [kWh]'] / 0.37 * 0.63)))
 
     # pivot.loc[df['Etotal']<101,'$']= df['Etotal']*hasta100
     # pivot.loc[(df['Etotal']>101) & (df['Etotal']<601),'$']= (df['Etotal'] - 100)*hasta600 + 100*hasta100

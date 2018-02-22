@@ -21,7 +21,7 @@ def collector(base):
     kaisl = 0.04    # lana de vidrio y PUF
     Raisl = Rext + espaisl
     largo = 0.981        # del cilindro
-    Aext = 2 * math.pi * Raisl * largo  # A ext del cilindro del tanque
+    Aext = 2 * math.pi * Raisl * largo  # Aext del cilindro del tanque
 
     # Collector
     n0 = 0.7
@@ -55,7 +55,8 @@ def collector(base):
     Tsale = cols.index('Temp salida a respaldo')
     # Ef = cols.index('Ef inst')
 
-    z = 0.7  # z para ajustar vel del viento de 10 m a 3 m de altura, para ciudades es 0.7
+    # z para ajustar vel del viento de 10 a 3 m de altura, para ciudades es 0.7
+    z = 0.7
 
     base.iloc[0, Ttk] = 60  # base.iloc[0, Tmains]
 
@@ -75,12 +76,13 @@ def collector(base):
         Tp1 = 20
         while True:
             # z para ajustar vel del viento de 10 m a 3 m de altura
-            hc = 5.7 + 3.8 * (math.log(3 / z) / math.log(10 / z)) * base.iloc[i, Vviento]
-            hr = emis_ca * 5.67E-8 * (((Tp + 273) ** 4 - (ta + 273) ** 4)) / (Tp - ta)
+            hc = (5.7 + 3.8 * (math.log(3 / z) / math.log(10 / z)) *
+                  base.iloc[i, Vviento])
+            hr = (emis_ca * 5.67E-8 * (((Tp + 273) ** 4 - (ta + 273) ** 4)) /
+                  (Tp - ta))
             h = hr + hc
             # Qp/L de canos considero temp tk o 60 si es mayor Ttk
-            Qpcan = 2 * math.pi * (min(tm, Tseteo) - ta) / (math.log(Raisl_ca / Rext_ca) / kaisl_ca + 1 / (h * Raisl_ca))
-
+            Qpcan = (2 * math.pi * (min(tm, Tseteo) - ta) / (math.log(Raisl_ca / Rext_ca) / kaisl_ca + 1 / (h * Raisl_ca)))
             Tp1 = Qpcan / (h * math.pi * 2 * Raisl_ca) + ta
 
             if int(Tp) == int(Tp1):
@@ -98,17 +100,20 @@ def collector(base):
             base.iloc[i, Vsale] = base.iloc[i, cal]
         else:
             base.iloc[i, Tsale] = Tseteo
-            base.iloc[i, Vsale] = base.iloc[i, cal]*(Tseteo + perdidas - tmains) / (tm - tmains)
-
+            base.iloc[i, Vsale] = (base.iloc[i, cal] *
+                                   (Tseteo + perdidas - tmains) / (tm - tmains))
         # Perdidas en el cuerpo del TK
         Tpc = 50
         Tp1c = 20
         while True:
-            hc = 5.7 + 3.8 * (math.log(3 / z) / math.log(10 / z)) * base.iloc[i, Vviento]
-            hr = emis * 5.67E-8 * (((Tpc + 273) ** 4 - (ta + 273) ** 4)) / (Tpc - ta)
+            hc = (5.7 + 3.8 * (math.log(3 / z) / math.log(10 / z)) *
+                  base.iloc[i, Vviento])
+            hr = (emis * 5.67E-8 * (((Tpc + 273) ** 4 - (ta + 273) ** 4)) /
+                  (Tpc - ta))
             h = hr + hc
             # Qp del cilindro
-            Qpc = 2 * math.pi * largo * (tm - ta) / (math.log(Raisl / Rext) / kaisl + 1 / (h * Raisl))
+            Qpc = (2 * math.pi * largo * (tm - ta) /
+                   (math.log(Raisl / Rext) / kaisl + 1 / (h * Raisl)))
 
             Tp1c = Qpc / (h * Aext) + ta
             if int(Tpc) == int(Tp1c):
@@ -120,8 +125,10 @@ def collector(base):
         Tpt = 50
         Tp1t = 20
         while True:
-            hc = 5.7 + 3.8 * (math.log(3 / z) / math.log(10 / z)) * base.iloc[i, Vviento]
-            hr = emis * 5.67E-8 * (((Tpt + 273) ** 4 - (ta + 273) ** 4)) / (Tpt - ta)
+            hc = (5.7 + 3.8 * (math.log(3 / z) / math.log(10 / z)) *
+                  base.iloc[i, Vviento])
+            hr = (emis * 5.67E-8 * (((Tpt + 273) ** 4 - (ta + 273) ** 4)) /
+                  (Tpt - ta))
             h = hr + hc
             # Qp de una tapa
             Qpt = math.pi * Raisl ** 2 * (tm - ta) / (espaisl / kaisl + 1 / h)
@@ -134,6 +141,7 @@ def collector(base):
 
         Qp = Qpc + 2 * Qpt
         # Qu y Qp en Wh por lo que multiplico x 3600 y / 1000 para KJ
-        base.iloc[i, Ttk] = tm + (base.iloc[i, Qu] * 3.6 - Qp * 3.6 - base.iloc[i, Vsale] * 4.182 * (tm - tmains)) / (capTK * 4.182)
+        base.iloc[i, Ttk] = (tm + (base.iloc[i, Qu] * 3.6 - Qp * 3.6 -
+                 base.iloc[i, Vsale] * 4.182 * (tm - tmains)) / (capTK * 4.182))
 
     return base

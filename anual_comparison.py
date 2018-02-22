@@ -35,7 +35,8 @@ def anual_comparison(personas=0, graphs=True):
                 es_gasin = gas_inst(yeardata).groupby([key[a]])[key2[b]].sum().reset_index()
                 es_gasin_col = gas_inst(yeardata, True).groupby([key[a]])[key2[b]].sum().reset_index()
                 esc = {1: es_caleA, 2: es_bba, 3: es_gasal, 4: es_gasin}
-                esc3 = {1: es_caleA_col, 2: es_bba_col, 3: es_gasal_col, 4: es_gasin_col}
+                esc3 = {1: es_caleA_col, 2: es_bba_col, 3: es_gasal_col,
+                        4: es_gasin_col}
                 labels = {1: '', 2: '', 3: '', 4: ''}
                 ylab = 'Consumo kWh/día'
                 if a == 2:
@@ -70,12 +71,18 @@ def anual_comparison(personas=0, graphs=True):
                 es_gasin_gn_col = tar[3](gas_inst(yeardata, True))
                 es_gasin_glp = tar[4](gas_inst(yeardata))
                 es_gasin_glp_col = tar[4](gas_inst(yeardata, True))
-                esc = {1: es_caleA_rs, 2: es_bba_rs, 3: es_gasal_gn, 4: es_gasin_gn}
-                esc2 = {1: es_caleA_dh, 2: es_bba_dh, 3: es_gasal_glp, 4: es_gasin_glp}
-                esc3 = {1: es_caleA_rs_col, 2: es_bba_rs_col, 3: es_gasal_gn_col, 4: es_gasin_gn_col}
-                esc4 = {1: es_caleA_dh_col, 2: es_bba_dh_col, 3: es_gasal_glp_col, 4: es_gasin_glp_col}
-                labels = {1: 'Res. Simp.', 2: 'Res. Simp.', 3: 'Gas Nat.', 4: 'Gas Nat.'}
-                labels2 = {1: 'Doble Hor.', 2: 'Doble Hor.', 3: 'GLP', 4: 'GLP'}
+                esc = {1: es_caleA_rs, 2: es_bba_rs, 3: es_gasal_gn,
+                       4: es_gasin_gn}
+                esc2 = {1: es_caleA_dh, 2: es_bba_dh, 3: es_gasal_glp,
+                        4: es_gasin_glp}
+                esc3 = {1: es_caleA_rs_col, 2: es_bba_rs_col,
+                        3: es_gasal_gn_col, 4: es_gasin_gn_col}
+                esc4 = {1: es_caleA_dh_col, 2: es_bba_dh_col,
+                        3: es_gasal_glp_col, 4: es_gasin_glp_col}
+                labels = {1: 'Res. Simp.', 2: 'Res. Simp.', 3: 'Gas Nat.',
+                          4: 'Gas Nat.'}
+                labels2 = {1: 'Doble Hor.', 2: 'Doble Hor.', 3: 'GLP',
+                           4: 'GLP'}
                 totalP = {'Esc. Base': es_base[key2[b]].sum(),
                           tit[1] + labels[1]: esc[1][key2[b]].sum(),
                           tit[2] + labels[2]: esc[2][key2[b]].sum(),
@@ -112,18 +119,39 @@ def anual_comparison(personas=0, graphs=True):
                         ax[i] = plt.subplot(4, 1, 1)
                     else:
                         ax[i] = plt.subplot(4, 1, i, sharex=ax1)
-                    plt.plot(es_base[key[a]], es_base[key2[b]], label='Esc. Base', color='r', linewidth=1.5)
-                    plt.plot(esc[i][key[a]], esc[i][key2[b]], label=labels[i] + ' sin colector', color='b', linewidth=1.5)
-                    plt.plot(esc3[i][key[a]], esc3[i][key2[b]], label=labels[i] + ' con colector', color='tab:orange', linewidth=1.5)
+                    plt.plot(es_base[key[a]], es_base[key2[b]],
+                             label='Esc. Base', color='r', linewidth=1.5)
+                    plt.plot(esc[i][key[a]], esc[i][key2[b]],
+                             label=labels[i] + ' sin colector', color='b',
+                             linewidth=1.5)
+                    plt.plot(esc3[i][key[a]], esc3[i][key2[b]],
+                             label=labels[i] + ' con colector',
+                             color='tab:orange', linewidth=1.5)
 
                     if b == 2:
-                        plt.plot(esc2[i][key[a]], esc2[i][key2[b]], label=labels2[i] + ' sin colector', color='m', linewidth=1.5)
-                        plt.plot(esc4[i][key[a]], esc4[i][key2[b]], label=labels2[i] + ' con colector', color='tab:gray', linewidth=1.5)
-                        plt.fill_between(es_base[key[a]], es_base[key2[b]], esc2[i][key2[b]], where=(es_base[key2[b]] > esc2[i][key2[b]]), color='g', alpha=0.2)
-                        plt.fill_between(es_base[key[a]], esc2[i][key2[b]], es_base[key2[b]], where=(es_base[key2[b]] < esc2[i][key2[b]]), color='y', alpha=0.2)
+                        plt.plot(esc2[i][key[a]], esc2[i][key2[b]],
+                                 label=labels2[i] + ' sin colector', color='m',
+                                 linewidth=1.5)
+                        plt.plot(esc4[i][key[a]], esc4[i][key2[b]],
+                                 label=labels2[i] + ' con colector',
+                                 color='tab:gray', linewidth=1.5)
+                        plt.fill_between(es_base[key[a]], es_base[key2[b]],
+                                         esc2[i][key2[b]],
+                                         where=(es_base[key2[b]] > esc2[i][key2[b]]),
+                                         color='g', alpha=0.2)
+                        plt.fill_between(es_base[key[a]], esc2[i][key2[b]],
+                                         es_base[key2[b]],
+                                         where=(es_base[key2[b]] < esc2[i][key2[b]]),
+                                         color='y', alpha=0.2)
 
-                    plt.fill_between(es_base[key[a]], es_base[key2[b]], esc[i][key2[b]], where=(es_base[key2[b]] > esc[i][key2[b]]), color='g', alpha=0.2)
-                    plt.fill_between(es_base[key[a]], esc[i][key2[b]], es_base[key2[b]], where=(es_base[key2[b]] < esc[i][key2[b]]), color='y', alpha=0.2)
+                    plt.fill_between(es_base[key[a]], es_base[key2[b]],
+                                     esc[i][key2[b]],
+                                     where=(es_base[key2[b]] > esc[i][key2[b]]),
+                                     color='g', alpha=0.2)
+                    plt.fill_between(es_base[key[a]], esc[i][key2[b]],
+                                     es_base[key2[b]],
+                                     where=(es_base[key2[b]] < esc[i][key2[b]]),
+                                     color='y', alpha=0.2)
                     if i == 3:
                         plt.ylabel(ylab, fontsize=24)
                     plt.yticks(y, fontsize=20)
@@ -150,39 +178,45 @@ def anual_comparison(personas=0, graphs=True):
     if graphs:
         plt.figure()
         ax = plt.subplot(1, 1, 1)
-        plt.title('Consumo calentamiento de agua caliente anual', fontsize=28, color='c')
+        plt.title('Consumo calentamiento de agua caliente anual',
+                  fontsize=28, color='c')
         plt.barh(range(len(ordenadaE)), ordenadaE.iloc[:, 0], align='center')
         plt.yticks(range(len(ordenadaE)), ordenadaE.index, fontsize=20)
         plt.xlabel('kWh / año', fontsize=24)
         plt.xticks(fontsize=20)
         ax.set_axisbelow(True)
         plt.grid(False, axis='y')
-        porc = [int((i / ordenadaE.at['Esc. Base', 'kWh/año'])* 100) for i in ordenadaE.values]
-        labels = [str(i) + '% del Esc. Base' for i in porc ]
+        porc = [int((i / ordenadaE.at['Esc. Base', 'kWh/año']) * 100)
+                for i in ordenadaE.values]
+        labels = [str(i) + '% del Esc. Base' for i in porc]
         rects = ax.patches
         # esp = 0.3 *rects[-1].get_width()
         for rect, label in zip(rects, labels):
             width = rect.get_width()
-            ax.text(width * 0.8, rect.get_y(), label, ha='center', va='bottom', fontsize=20, color='r', weight='bold')
+            ax.text(width * 0.8, rect.get_y(), label, ha='center', va='bottom',
+                    fontsize=20, color='r', weight='bold')
         # rect.get_y() + rect.get_height()/2
-        
+
         plt.figure()
         ax = plt.subplot(1, 1, 1)
-        plt.title('Costo calentamiento de agua caliente anual', fontsize=28, color='c')
+        plt.title('Costo calentamiento de agua caliente anual',
+                  fontsize=28, color='c')
         plt.barh(range(len(ordenadaP)), ordenadaP.iloc[:, 0], align='center')
         plt.yticks(range(len(ordenadaP)), ordenadaP.index, fontsize=20)
         plt.xlabel('miles de $ / año', fontsize=24)
         plt.xticks(fontsize=20)
         ax.set_axisbelow(True)
         plt.grid(False, axis='y')
-        porc = [int((i / ordenadaP.at['Esc. Base', '$/año'])* 100) for i in ordenadaP.values]
-        labels = [str(i) + '% del Esc. Base' for i in porc ]
+        porc = [int((i / ordenadaP.at['Esc. Base', '$/año']) * 100)
+                for i in ordenadaP.values]
+        labels = [str(i) + '% del Esc. Base' for i in porc]
         rects = ax.patches
         # esp = 0.35 * rects[-1].get_width()
         for rect, label in zip(rects, labels):
             width = rect.get_width()
-            ax.text(width * 0.9, rect.get_y(), label, ha='center', va='bottom', fontsize=18, color='r', weight='bold')
-        
+            ax.text(width * 0.9, rect.get_y(), label, ha='center', va='bottom',
+                    fontsize=18, color='r', weight='bold')
+
         scale_x = 1000
         ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x/scale_x))
         ax.xaxis.set_major_formatter(ticks_x)

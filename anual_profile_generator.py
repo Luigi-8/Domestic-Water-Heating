@@ -11,28 +11,32 @@ import pandas as pd
 import datetime as dt
 import numpy as np
 
-# Liters per day per person for showers: 47.74
-# Liters per day per person for sinks: 28% x 47.74
-# Liters per day per person for DW: 18% x 47.74
+# Liters per day per person for showers: 5.68 * 8.14
+# Liters per day per person for sinks: 28% * 5.68 * 8.14
+# Liters per day per person for DW: 18% * 5.68 * 8.14
 
-def perfil_anual(personas):
 
-    # cantidad de agua total (fria + caliente)
+def perfil_anual(personas):   
+
+    # cantidad de agua total (fria +caliente)
     allevents = []
     agrupado = []
     for day in range(365):
         cons_dia = consumo_dia(personas)
         cons_dia['DOY'] = day + 1
         allevents.append(cons_dia)
-        agrupado.append(cons_dia.groupby(['DOY', 'Hora'])['Volumen [lts] tibia', 'Volumen [lts] caliente'].
+        agrupado.append(cons_dia.groupby(['DOY', 'Hora'])
+                        ['Volumen [lts] tibia', 'Volumen [lts] caliente'].
                         agg(sum).reset_index(level=['DOY', 'Hora']))
 
     eventos = pd.concat(allevents)
     consumo_horario = pd.concat(agrupado)
 
     hoy = dt.date.today().strftime("%d-%m-%y")
-    eventos.to_csv(r'generated_csvs\Eventos ' + hoy + ' ' + str(personas) + 'pers.csv')
-    consumo_horario.to_csv(r'generated_csvs\Horario ' + hoy + ' ' + str(personas) + 'pers.csv')
+    eventos.to_csv(r'generated_csvs\Eventos ' + hoy + ' ' +
+                   str(personas) + 'pers.csv')
+    consumo_horario.to_csv(r'generated_csvs\Horario ' + hoy + ' ' +
+                           str(personas) + 'pers.csv')
 
     return [eventos, consumo_horario]
 
@@ -73,7 +77,8 @@ def sink_time():
             [20, 0.0691218130311615, 0.855524079320113],
             [21, 0.056657223796034, 0.912181303116147],
             [22, 0.0481586402266289, 0.960339943342776],
-            [23, 0.0396600566572238, 1]], columns=['Hour', 'Hourly Profile', 'Accumulated'])
+            [23, 0.0396600566572238, 1]],
+            columns=['Hour', 'Hourly Profile', 'Accumulated'])
 
     a = random.random()
     time['Dif'] = abs(time['Accumulated'] - a)
@@ -106,7 +111,8 @@ def shower_time():
             [20, 0.0422740524781341, 0.88824101068999],
             [21, 0.0417881438289602, 0.93002915451895],
             [22, 0.0408163265306122, 0.970845481049563],
-            [23, 0.0291545189504373, 1]], columns=['Hour', 'Hourly Profile', 'Accumulated'])
+            [23, 0.0291545189504373, 1]],
+            columns=['Hour', 'Hourly Profile', 'Accumulated'])
 
     a = random.random()
     time['Dif'] = abs(time['Accumulated'] - a)
@@ -139,7 +145,8 @@ def DW_time():
             [20, 0.110921502, 0.798634813],
             [21, 0.090443686, 0.889078499],
             [22, 0.066552901, 0.9556314],
-            [23, 0.044368601, 1]], columns=['Hour', 'Hourly Profile', 'Accumulated'])
+            [23, 0.044368601, 1]],
+            columns=['Hour', 'Hourly Profile', 'Accumulated'])
 
     a = random.random()
     time['Dif'] = abs(time['Accumulated']-a)
@@ -156,7 +163,7 @@ def sink(personas):
     stdev_flow = 2.31
 
     d = []
-    # 0.28 * 47.74 / (0.62 * 4.32) = 4.99 = 5
+    # 0.28 * 5.68 * 8.14 / (0.62 * 4.32) = 4.8 = 5
     while len(d) < 5 * personas:
 
         # Duracion
@@ -167,11 +174,13 @@ def sink(personas):
         # Flujo
         flu = 0
         while (flu < 1) | (flu > 11):
-            flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
+            flu = (avg_flow + stdev_flow * math.sin(2 * math.pi *
+                                                    random.random()) *
                    math.sqrt(-2 * math.log(random.random())))
 
-        d.append({'Hora': sink_time(), 'Duracion [min]': dur,
-                  'Flujo [lts/min]': flu, 'Volumen [lts] tibia': dur * flu})
+        d.append({'Hora': shower_time(), 'Duracion [min]': dur,
+                  'Flujo [lts/min]': flu,
+                  'Volumen [lts] caliente': dur * flu})
 
     df = pd.DataFrame(d)
     df['Uso'] = 'Pileta'
@@ -198,12 +207,14 @@ def shower(personas):
         # Flujo
         flu = 0
         while (flu < 2.75) | (flu > 11):
-            flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
+            flu = (avg_flow + stdev_flow * math.sin(2 * math.pi *
+                                                    random.random()) *
                    math.sqrt(-2 * math.log(random.random())))
 
         if (flu * dur) < 120:
             d.append({'Hora': shower_time(), 'Duracion [min]': dur,
-                      'Flujo [lts/min]': flu, 'Volumen [lts] tibia': flu * dur})
+                      'Flujo [lts/min]': flu,
+                      'Volumen [lts] caliente': dur * flu})
 
     df = pd.DataFrame(d)
     df['Uso'] = 'Ducha'
@@ -220,8 +231,8 @@ def DW(personas):
     stdev_flow = 0.76  # 0.76 en Generator
 
     d = []
-    # 0.18 * 47.74 / (1.38 * 5.26) = 1.18 = 2
-    while len(d) <  personas:
+    # 0.18 * 5.68 * 8.14/ (1.38 * 5.26) = 1.14 = 1
+    while len(d) < personas:
 
         # Duracion
         dur = 0
@@ -231,12 +242,13 @@ def DW(personas):
         # Flujo
         flu = 0
         while (flu < 1) | (flu > 11):
-            flu = (avg_flow + stdev_flow * math.sin(2 * math.pi * random.random()) *
+            flu = (avg_flow + stdev_flow * math.sin(2 * math.pi *
+                                                    random.random()) *
                    math.sqrt(-2 * math.log(random.random())))
 
         d.append({'Hora': shower_time(), 'Duracion [min]': dur,
-                  'Flujo [lts/min]': flu, 'Volumen [lts] caliente': dur * flu})
-
+                  'Flujo [lts/min]': flu,
+                  'Volumen [lts] caliente': dur * flu})
     df = pd.DataFrame(d)
     df['Uso'] = 'Platos'
 

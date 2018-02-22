@@ -15,7 +15,8 @@ def economia(personas=0):
     anual_comp = anual_comparison(personas)
 
     npv_rate = 0.1
-    inv = {'cal': 8369, 'bomba': 34800, 'G_al': 15600, 'G_in': 17703, 'Col': 49590}
+    inv = {'cal': 8369, 'bomba': 34800, 'G_al': 15600, 'G_in': 17703,
+           'Col': 49590}
     # Mant Esc. Base es 0
     mant = {'cal': 0, 'bomba': 1000, 'G_al': 2020, 'G_in': 2020, 'Col': 1000}
     df = anual_comp[1].copy()
@@ -35,7 +36,8 @@ def economia(personas=0):
     df['PRS'] = round((df['Inv'] / (df['Ahorro'] - df['Mant'])), 1)
     for k in range(1, len(df)+1):
         # 10 anos se toma como vida util
-        flujo = [(df.loc[k, 'Ahorro'] - df.loc[k, 'Mant']) for i in range(10 + 1)]
+        flujo = [(df.loc[k, 'Ahorro'] - df.loc[k, 'Mant'])
+                 for i in range(10 + 1)]
         flujo[0] = -df.loc[k, 'Inv']
         df.loc[k, 'IRR'] = round(np.irr(flujo) * 100, 0)
         df.loc[k, 'NPV'] = round(np.npv(npv_rate, flujo), 0)
@@ -59,7 +61,8 @@ def economia(personas=0):
     # esp = 0.35 * rects[-1].get_width()
     for rect, label in zip(rects, df.PRS):
         width = rect.get_width()
-        ax1.text(width * 0.8, rect.get_y(), label, ha='center', va='bottom', fontsize=18, color='w', weight='bold')
+        ax1.text(width * 0.8, rect.get_y(), label, ha='center', va='bottom',
+                 fontsize=18, color='w', weight='bold')
 
     ax2 = plt.subplot(122, sharey=ax1)
     plt.barh(range(len(df)), df['IRR'], align='center', color='r')
@@ -72,7 +75,8 @@ def economia(personas=0):
     rects = ax2.patches
     for rect, label in zip(rects, df.IRR.astype(int)):
         width = rect.get_width()
-        ax2.text(width * 0.8, rect.get_y(), label, ha='center', va='bottom', fontsize=18, color='w', weight='bold')
+        ax2.text(width * 0.8, rect.get_y(), label, ha='center', va='bottom',
+                 fontsize=18, color='w', weight='bold')
 
     plt.subplots_adjust(wspace=0, left=0.18)
 
